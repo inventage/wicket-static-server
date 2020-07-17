@@ -1,0 +1,26 @@
+{
+  "name": "wicket-static-server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "staticHtmlServerAdmin.js",
+  "scripts": {
+    "serve": "node wicketStaticServer.js --server"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "basic-auth": "^2.0.1",
+    "compression": "^1.7.4",
+    "connect-timeout": "^1.9.0",
+    "express": "^4.17.1",
+    "extend": "^3.0.2",
+    "glob": "^7.1.6",
+    "graceful-fs": "^4.2.4",
+    "marked": "^1.1.1",
+    "nomnom": "^1.8.1",
+    "recursive-readdir-sync": "^1.0.6",
+    "serve-index": "^1.9.1",
+    "swig": "^1.4.2",
+    "swig-highlight": "^0.2.0"
+  }
+}
