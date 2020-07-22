@@ -20,9 +20,9 @@ const app = express();
 // Add syntax highlighting for styleguide
 require('swig-highlight').apply(swig);
 
-const WICKET_ROOT = path.resolve(`${__dirname}/../../java/ch/glkb`);
-const WICKET_EXTEND_ROOT = path.resolve(`${__dirname}/../../../../../*/src/`);
-const WEB_ROOT = path.resolve(`${__dirname}/../../webapp`);
+const WICKET_ROOT = path.resolve(`${__dirname}/test/templates/package-a/`);
+const WICKET_EXTEND_ROOT = path.resolve(`${__dirname}/test/templates/`);
+const WEB_ROOT = path.resolve(`${__dirname}/`);
 
 // Caching variables
 const filePathsCache = {};
