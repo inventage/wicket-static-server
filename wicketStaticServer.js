@@ -32,7 +32,9 @@ const filePathsCache = {};
 // Setup server options
 opts.option('-a, --auth', 'Should we use basic auth for password protection?', false)
     .option('-r, --reload', 'Should we add live-reload middleware?', false)
+    .option('--reloadPort <number>', 'Which port should we use for express server?', 35729)
     .option('-s, --server', 'Should we start an express server?', false)
+    .option('--serverPort <number>', 'Which port should we use for express server?', 3000)
     .option('-v, --verbose', 'Should we display some more information during execution?', false)
     .parse(process.argv);
 
@@ -95,9 +97,9 @@ function haltOnTimeout(req, res, next) {
  * @returns {*}
  */
 function addLiveReload(html) {
-    if (opts.reload === true && html.indexOf('localhost:35729/livereload.js') === -1) {
+    if (opts.reload === true && html.match(/localhost:[0-9]{1,5}\/livereload.js/) === null) {
         // noinspection JSUnresolvedLibraryURL
-        return html.replace('</body>', '<script src="//localhost:35729/livereload.js"></script></body>');
+        return html.replace('</body>', `<script src="//localhost:${opts.reloadPort}/livereload.js"></script></body>`);
     }
 
     return html;
@@ -537,7 +539,7 @@ app.all('/test/post', (req, res) => {
 
 // Start server if we have the --server flag
 if (opts.server === true) {
-    const port = process.env.PORT || 3000;
+    const port = opts.serverPort;
 
     http
         .createServer(app)
