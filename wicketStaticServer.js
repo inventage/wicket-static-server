@@ -1,21 +1,23 @@
 /* eslint-disable import/no-extraneous-dependencies */
-const express = require('express');
-const fs = require('graceful-fs');
-const path = require('path');
-const glob = require('glob');
-const marked = require('marked');
-const swig = require('swig-templates');
-const timeout = require('connect-timeout');
+const basicAuth = require('basic-auth');
 const bodyParser = require('body-parser');
+const compression = require('compression');
+const express = require('express');
+const extend = require('extend');
+const fs = require('graceful-fs');
+const glob = require('glob');
+const http = require('http');
+const marked = require('marked');
+const path = require('path');
+const recursiveReadSync = require('recursive-readdir-sync');
 const serveIndex = require('serve-index');
 const serveStatic = require('serve-static');
-const http = require('http');
-const basicAuth = require('basic-auth');
-const extend = require('extend');
-const compression = require('compression');
-const recursiveReadSync = require('recursive-readdir-sync');
+const swig = require('swig-templates');
+const timeout = require('connect-timeout');
+const { Command } = require('commander');
 
 const app = express();
+const opts = new Command();
 
 // Add syntax highlighting for styleguide
 require('swig-highlight').apply(swig);
@@ -28,28 +30,11 @@ const WEB_ROOT = path.resolve(`${__dirname}/`);
 const filePathsCache = {};
 
 // Setup server options
-const opts = require('nomnom')
-    .option('reload', {
-        flag: true,
-        default: false,
-        help: 'Add live-reload middleware'
-    })
-    .option('verbose', {
-        flag: true,
-        default: false,
-        help: 'Should we display some more information during execution?'
-    })
-    .option('server', {
-        flag: true,
-        default: false,
-        help: 'Should we start an express server? Only needed if the server is used outside of Grunt.'
-    })
-    .option('auth', {
-        flag: true,
-        default: false,
-        help: 'Should we use basic auth for password protection?'
-    })
-    .parse();
+opts.option('-a, --auth', 'Should we use basic auth for password protection?', false)
+    .option('-r, --reload', 'Should we add live-reload middleware?', false)
+    .option('-s, --server', 'Should we start an express server?', false)
+    .option('-v, --verbose', 'Should we display some more information during execution?', false)
+    .parse(process.argv);
 
 /**
  * Simple basic auth middleware for use with Express 4.x.
