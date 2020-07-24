@@ -29,6 +29,11 @@ const filePathsCache = {};
 
 // Setup server options
 const opts = require('nomnom')
+    .option('reload', {
+        flag: true,
+        default: false,
+        help: 'Add live-reload middleware'
+    })
     .option('verbose', {
         flag: true,
         default: false,
@@ -105,7 +110,7 @@ function haltOnTimeout(req, res, next) {
  * @returns {*}
  */
 function addLiveReload(html) {
-    if (html.indexOf('localhost:35729/livereload.js') === -1) {
+    if (opts.reload === true && html.indexOf('localhost:35729/livereload.js') === -1) {
         // noinspection JSUnresolvedLibraryURL
         return html.replace('</body>', '<script src="//localhost:35729/livereload.js"></script></body>');
     }
