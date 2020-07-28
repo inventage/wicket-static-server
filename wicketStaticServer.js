@@ -27,16 +27,20 @@ const filePathsCache = {};
 
 // Setup server options
 opts.option('-a, --auth', 'Should we use basic auth for password protection?', false)
-    .option('--entryPage <pathToFolder>', 'Display markdown file as entry page.', path.resolve(`${__dirname}/README.md`))
-    .option('--expressRoot <pathToFolder>', 'Root path of express server.', path.resolve(`${__dirname}/`))
+    .option('--entryPage <pathToFolder>', 'Display markdown file as entry page.', resolvePath, resolvePath('README.md'))
+    .option('--expressRoot <pathToFolder>', 'Root path of express server.', resolvePath, resolvePath(''))
     .option('-r, --reload', 'Should we add live-reload middleware?', false)
     .option('--reloadPort <number>', 'Which port should we use for express server?', 35729)
     .option('-s, --server', 'Should we start an express server?', false)
     .option('--serverPort <number>', 'Which port should we use for express server?', 3000)
-    .option('--templateExpansion <pathToFolder>', 'Extend listed templates by templates of given folder. It must be a superset of --templateScope', path.resolve(`${__dirname}/test/templates/`))
-    .option('--templateScope <pathToFolder>', 'List templates of given folder.', path.resolve(`${__dirname}/test/templates/package-a/`))
+    .option('--templateExpansion <pathToFolder>', 'Extend listed templates by templates of given folder. It must be a superset of --templateScope', resolvePath, resolvePath('test/templates'))
+    .option('--templateScope <pathToFolder>', 'List templates of given folder.', resolvePath, resolvePath('test/templates/package-a'))
     .option('-v, --verbose', 'Should we display some more information during execution?', false)
     .parse(process.argv);
+
+function resolvePath(value) {
+    return path.resolve(`${process.cwd()}/${value}`);
+}
 
 /**
  * Simple basic auth middleware for use with Express 4.x.

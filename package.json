@@ -8,6 +8,9 @@
     "test": "echo \"No test specified\""
   },
   "author": "",
+  "bin": {
+    "wicket-static-server": "./wicketStaticServer.js"
+  },
   "license": "ISC",
   "devDependencies": {
     "basic-auth": "^2.0.1",
