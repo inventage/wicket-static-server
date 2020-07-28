@@ -22,19 +22,19 @@ const opts = new Command();
 // Add syntax highlighting for styleguide
 require('swig-highlight').apply(swig);
 
-const WICKET_ROOT = path.resolve(`${__dirname}/test/templates/package-a/`);
-const WICKET_EXTEND_ROOT = path.resolve(`${__dirname}/test/templates/`);
-const WEB_ROOT = path.resolve(`${__dirname}/`);
-
 // Caching variables
 const filePathsCache = {};
 
 // Setup server options
 opts.option('-a, --auth', 'Should we use basic auth for password protection?', false)
+    .option('--entryPage <pathToFolder>', 'Display markdown file as entry page.', path.resolve(`${__dirname}/README.md`))
+    .option('--expressRoot <pathToFolder>', 'Root path of express server.', path.resolve(`${__dirname}/`))
     .option('-r, --reload', 'Should we add live-reload middleware?', false)
     .option('--reloadPort <number>', 'Which port should we use for express server?', 35729)
     .option('-s, --server', 'Should we start an express server?', false)
     .option('--serverPort <number>', 'Which port should we use for express server?', 3000)
+    .option('--templateExpansion <pathToFolder>', 'Extend listed templates by templates of given folder. It must be a superset of --templateScope', path.resolve(`${__dirname}/test/templates/`))
+    .option('--templateScope <pathToFolder>', 'List templates of given folder.', path.resolve(`${__dirname}/test/templates/package-a/`))
     .option('-v, --verbose', 'Should we display some more information during execution?', false)
     .parse(process.argv);
 
@@ -106,7 +106,7 @@ function addLiveReload(html) {
 }
 
 /**
- * Searches for the given filename in the WICKET_EXTEND_ROOT
+ * Searches for the given filename in the opts.templateExpansion
  * and returns the entire file contents if the file was found.
  *
  * @param fileName
@@ -119,7 +119,7 @@ function readWicketHtmlFile(fileName) {
         return readFile(filePathsCache[fileName]);
     }
 
-    const searchPattern = `${WICKET_EXTEND_ROOT}/**/${fileName}`;
+    const searchPattern = `${opts.templateExpansion}/**/${fileName}`;
     filePathsCache[fileName] = glob.sync(searchPattern)[0];
 
     return readFile(filePathsCache[fileName]);
@@ -408,7 +408,7 @@ function serveWicketPage(req, res) {
 }
 
 /**
- * A generic function that reads the content of WICKET_ROOT and composes
+ * A generic function that reads the content of opts.templateScope and composes
  * a listing of all static pages that correspond to the given regex.
  *
  * @param res
@@ -417,12 +417,12 @@ function serveWicketPage(req, res) {
  * @param title The listing title
  */
 function staticPageListing(res, validPageRegex, pageRoute, title) {
-    const pageDirectory = recursiveReadSync(WICKET_ROOT);
+    const pageDirectory = recursiveReadSync(opts.templateScope);
     let html = '';
 
     pageDirectory.forEach((pageFile) => {
         if (pageFile.match(validPageRegex)) {
-            const pageFileWithoutRoot = pageFile.replace(`${WICKET_ROOT}/`, '');
+            const pageFileWithoutRoot = pageFile.replace(`${opts.templateScope}/`, '');
             html += `<a href="/${pageRoute}/${pageFileWithoutRoot}">/${pageRoute}/${pageFileWithoutRoot}</a><br>`;
         }
     });
@@ -443,7 +443,7 @@ function staticPageListing(res, validPageRegex, pageRoute, title) {
 app.use(timeout('10s'));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(compression());
-app.use(express.static(WEB_ROOT));
+app.use(express.static(opts.expressRoot));
 app.use(haltOnTimeout);
 
 /**
@@ -471,7 +471,7 @@ app.use('/doc', serveStatic('./doc'));
  * Main route
  */
 app.get('/', (req, res) => {
-    const readmeFile = readFile(`${__dirname}/README.md`);
+    const readmeFile = readFile(opts.entryPage);
 
     res.set('Content-Type', 'text/html; charset=utf-8');
     res.send(marked(readmeFile));

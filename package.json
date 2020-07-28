@@ -2,7 +2,7 @@
   "name": "@inventage/wicket-static-server",
   "version": "1.0.0",
   "description": "Read and extend Apache's Wicket templates and make them accessible on localhost.",
-  "main": "staticHtmlServerAdmin.js",
+  "main": "wicketStaticServer.js",
   "scripts": {
     "serve": "node wicketStaticServer.js --server",
     "test": "echo \"No test specified\""
