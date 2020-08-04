@@ -12,7 +12,7 @@
     "wicket-static-server": "./wicketStaticServer.js"
   },
   "license": "ISC",
-  "devDependencies": {
+  "dependencies": {
     "basic-auth": "^2.0.1",
     "commander": "^6.0.0",
     "compression": "^1.7.4",
