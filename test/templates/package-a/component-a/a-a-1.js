@@ -1,1 +1,1 @@
-console.log('external script in a-a-1-page');
+console.log("external script in a-a-1-page"); // eslint-disable-line no-console

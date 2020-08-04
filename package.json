@@ -5,6 +5,7 @@
   "main": "wicketStaticServer.js",
   "scripts": {
     "serve": "node wicketStaticServer.js --server",
+    "format": "npx prettier --write . && npx eslint --fix --ignore-pattern **/*.json",
     "test": "echo \"No test specified\""
   },
   "author": "",
@@ -26,5 +27,30 @@
     "serve-index": "^1.9.1",
     "swig-highlight": "^0.2.0",
     "swig-templates": "^2.0.3"
+  },
+  "devDependencies": {
+    "eslint": "^7.6.0",
+    "eslint-config-airbnb": "^18.2.0",
+    "eslint-config-prettier": "^6.11.0",
+    "eslint-plugin-import": "^2.22.0",
+    "eslint-plugin-jsx-a11y": "^6.3.1",
+    "eslint-plugin-prettier": "^3.1.4",
+    "eslint-plugin-react": "^7.20.5",
+    "husky": "^4.2.5",
+    "lint-staged": "^10.2.11",
+    "prettier": "^2.0.5"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "**/*": [
+      "prettier --write"
+    ],
+    "**/*.js": [
+      "eslint --fix"
+    ]
   }
 }

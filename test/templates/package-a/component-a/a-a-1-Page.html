@@ -1,11 +1,15 @@
 <!-- extend-page="a-Page.html" with="title: a-a-1-page" -->
 <wicket:extend>
   <p>a-a-1-page</p>
-  <script>console.log('inlined script in body of a-a-1-page');</script>
+  <script>
+    console.log("inlined script in body of a-a-1-page");
+  </script>
   <wicket:child></wicket:child>
 </wicket:extend>
 
 <wicket:head>
   <script src="/templates/package-a/component-a/a-a-1.js"></script>
-  <script>console.log('inlined script in head of a-a-1-page');</script>
+  <script>
+    console.log("inlined script in head of a-a-1-page");
+  </script>
 </wicket:head>
