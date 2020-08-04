@@ -1,18 +1,18 @@
 {
   "name": "@inventage/wicket-static-server",
-  "version": "1.0.0-beta",
+  "version": "1.0.0-beta.0",
   "description": "Resolve Wicket's template hierarchy and render all HTML parts as single static pages.",
-  "main": "wicketStaticServer.js",
+  "main": "server.js",
   "scripts": {
-    "serve": "node wicketStaticServer.js --server",
+    "serve": "node server.js --server",
     "format": "npx prettier --write . && npx eslint --fix --ignore-pattern **/*.json",
     "test": "echo \"No test specified\""
   },
-  "author": "",
+  "author": "Inventage AG",
   "bin": {
-    "wicket-static-server": "./wicketStaticServer.js"
+    "wicket-static-server": "./server.js"
   },
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "basic-auth": "^2.0.1",
     "commander": "^6.0.0",
