@@ -12,7 +12,6 @@ Resolve [Wicket's](https://wicket.apache.org/) template hierarchy and render all
 
 Use CLI parameters for easy configuration.
 
-- Use `-a` or `--auth` to activate basic auth for password protection.
 - Use `-h, --homepage` to show a specific html or markdown file as homepage.
 - Use `-e, --expressRoot` to define a path from which additional static files are served.
 - Use `-r` or `--reload` to add <script src="//localhost:[opts.reloadPort]/livereload.js"></script> to all page bodies.
