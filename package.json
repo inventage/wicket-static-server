@@ -6,6 +6,7 @@
   "scripts": {
     "serve": "node server.js --server",
     "format": "npx prettier --write . && npx eslint --fix --ignore-pattern **/*.json",
+    "publish": "np",
     "test": "echo \"No test specified\""
   },
   "author": "Inventage AG",
@@ -37,6 +38,7 @@
     "eslint-plugin-react": "^7.20.5",
     "husky": "^4.2.5",
     "lint-staged": "^10.2.11",
+    "np": "^6.4.0",
     "prettier": "^2.0.5"
   },
   "husky": {
@@ -51,5 +53,8 @@
     "**/*.js": [
       "eslint --fix"
     ]
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
