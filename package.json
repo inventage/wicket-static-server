@@ -9,9 +9,25 @@
     "publish": "np",
     "test": "echo \"No test specified\""
   },
-  "author": "Inventage AG",
+  "author": {
+    "name": "Gridonic",
+    "email": "hello@gridonic.ch",
+    "url": "https://gridonic.ch"
+  },
+  "contributors": [
+    {
+      "name": "Peter Siska",
+      "email": "peter.siska@inventage.com",
+      "url": "https://inventage.com/"
+    },
+    {
+      "name": "Niklaus Hug",
+      "email": "niklaus.hug@inventage.com",
+      "url": "https://inventage.com/"
+    }
+  ],
   "bin": {
-    "wicket-static-server": "./server.js"
+    "wicket-static-server": "./bin/server.js"
   },
   "license": "MIT",
   "dependencies": {
