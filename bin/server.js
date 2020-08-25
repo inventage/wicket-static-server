@@ -1,1 +1,3 @@
-../server.js
+#!/usr/bin/env node
+
+require('../server');

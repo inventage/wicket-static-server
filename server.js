@@ -1,5 +1,3 @@
-#!/usr/bin/env node
-
 /* eslint-disable import/no-extraneous-dependencies */
 const bodyParser = require("body-parser");
 const compression = require("compression");
