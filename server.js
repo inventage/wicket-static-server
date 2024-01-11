@@ -1,25 +1,24 @@
-/* eslint-disable import/no-extraneous-dependencies */
-const bodyParser = require("body-parser");
-const compression = require("compression");
-const express = require("express");
-const extend = require("extend");
-const fs = require("graceful-fs");
-const glob = require("glob");
-const http = require("http");
-const marked = require("marked");
-const path = require("path");
-const recursiveReadSync = require("recursive-readdir-sync");
-const serveIndex = require("serve-index");
-const serveStatic = require("serve-static");
-const swig = require("swig-templates");
-const timeout = require("connect-timeout");
-const { Command } = require("commander");
+const bodyParser = require('body-parser');
+const compression = require('compression');
+const express = require('express');
+const extend = require('extend');
+const fs = require('graceful-fs');
+const glob = require('glob');
+const http = require('http');
+const marked = require('marked');
+const path = require('path');
+const recursiveReadSync = require('recursive-readdir-sync');
+const serveIndex = require('serve-index');
+const serveStatic = require('serve-static');
+const swig = require('swig-templates');
+const timeout = require('connect-timeout');
+const { Command } = require('commander');
 
 const app = express();
 const opts = new Command();
 
 // Add syntax highlighting for styleguide
-require("swig-highlight").apply(swig);
+require('swig-highlight').apply(swig);
 
 // Caching variables
 const filePathsCache = {};
@@ -27,44 +26,44 @@ const filePathsCache = {};
 // Setup server options
 opts
   .option(
-    "-h, --homepage <pathToFile>",
-    "Display html or markdown file as homepage.",
+    '-h, --homepage <pathToFile>',
+    'Display html or markdown file as homepage.',
     resolvePath,
-    resolvePath("README.md")
+    resolvePath('README.md')
   )
   .option(
-    "-e, --expressRoot <pathToFolder>",
-    "Root path of express server.",
+    '-e, --expressRoot <pathToFolder>',
+    'Root path of express server.',
     resolvePath,
-    resolvePath("")
+    resolvePath('')
   )
-  .option("-r, --reload", "Should we add live-reload middleware?", false)
+  .option('-r, --reload', 'Should we add live-reload middleware?', false)
   .option(
-    "-s, --reloadPort <number>",
-    "Which port should we use for express server?",
+    '-s, --reloadPort <number>',
+    'Which port should we use for express server?',
     35729
   )
-  .option("--server", "Should we start an express server?", false)
+  .option('--server', 'Should we start an express server?', false)
   .option(
-    "--serverPort <number>",
-    "Which port should we use for express server?",
+    '--serverPort <number>',
+    'Which port should we use for express server?',
     3000
   )
   .option(
-    "-e, --templateRootExpansion <pathToFolder>",
-    "Extend listed templates by templates of given folder. It must be a superset of --templateRoot",
+    '-e, --templateRootExpansion <pathToFolder>',
+    'Extend listed templates by templates of given folder. It must be a superset of --templateRoot',
     resolvePath,
-    resolvePath("test/templates")
+    resolvePath('test/templates')
   )
   .option(
-    "-t, --templateRoot <pathToFolder>",
-    "List templates of given folder.",
+    '-t, --templateRoot <pathToFolder>',
+    'List templates of given folder.',
     resolvePath,
-    resolvePath("test/templates/package-a")
+    resolvePath('test/templates/package-a')
   )
   .option(
-    "-v, --verbose",
-    "Should we display some more information during execution?",
+    '-v, --verbose',
+    'Should we display some more information during execution?',
     false
   )
   .parse(process.argv);
@@ -82,7 +81,7 @@ function resolvePath(value) {
  */
 function readFile(filePath) {
   if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
-    return fs.readFileSync(filePath, { encoding: "utf-8" });
+    return fs.readFileSync(filePath, { encoding: 'utf-8' });
   }
 
   return null;
@@ -115,7 +114,7 @@ function addLiveReload(html) {
   ) {
     // noinspection JSUnresolvedLibraryURL
     return html.replace(
-      "</body>",
+      '</body>',
       `<script src="//localhost:${opts.reloadPort}/livereload.js"></script></body>`
     );
   }
@@ -173,7 +172,7 @@ function includeAdditionalHeadElements(html, additionalHeadElements) {
     return html;
   }
 
-  return html.replace(found[0], additionalHeadElements.join("\n"));
+  return html.replace(found[0], additionalHeadElements.join('\n'));
 }
 
 /**
@@ -183,7 +182,7 @@ function includeAdditionalHeadElements(html, additionalHeadElements) {
  */
 function time(key) {
   if (opts.verbose === true) {
-    console.time(key); // eslint-disable-line no-console
+    console.time(key);
   }
 }
 
@@ -194,7 +193,7 @@ function time(key) {
  */
 function timeEnd(key) {
   if (opts.verbose === true) {
-    console.timeEnd(key); // eslint-disable-line no-console
+    console.timeEnd(key);
   }
 }
 
@@ -219,10 +218,10 @@ function parseExtendVariables(existingVariables, variablesInExtendString) {
     return existingVariables;
   }
 
-  const variablePairs = found[1].split(",");
+  const variablePairs = found[1].split(',');
 
   variablePairs.forEach((variablePair) => {
-    const variableDefinition = variablePair.split(":");
+    const variableDefinition = variablePair.split(':');
 
     if (variableDefinition.length !== 2) {
       throw new Error(
@@ -261,7 +260,7 @@ function extractVars(varsString) {
   const matches = varsString.match(variablesWithValuesRegex);
 
   matches.forEach((match) => {
-    const variableDefinition = match.split("=");
+    const variableDefinition = match.split('=');
     vars[variableDefinition[0]] = variableDefinition[1].substr(
       1,
       variableDefinition[1].length - 2
@@ -292,10 +291,10 @@ function stripWicketTags(html) {
   const wicketTagRegex = /<\/?_?wicket:[^>]*>/gi;
   const wicketAttributesRegex = /\s?[^\s]*wicket:\w+(="[^"]*")?/gi;
 
-  let htmlWithoutWicketTags = html.replace(wicketTagRegex, "");
+  let htmlWithoutWicketTags = html.replace(wicketTagRegex, '');
   htmlWithoutWicketTags = htmlWithoutWicketTags.replace(
     wicketAttributesRegex,
-    ""
+    ''
   );
 
   return htmlWithoutWicketTags;
@@ -313,7 +312,7 @@ function extendParentWithChild(parentPage, childPage) {
   const found = parentPage.match(childRegex);
 
   if (!found) {
-    throw new Error("Parent page has no <wicket:child></wicket:child>");
+    throw new Error('Parent page has no <wicket:child></wicket:child>');
   }
 
   return parentPage.replace(found[0], childPage);
@@ -328,7 +327,8 @@ function extendParentWithChild(parentPage, childPage) {
  * @return {*}
  */
 function expandPages(html, variables, additionalHeadElements) {
-  const extendPageRegex = /<!-- extend-page="([^"]*)"( with="[^"]*")? -->\r?\n<wicket:(extend|panel|dialog)[^>]*>([\s\S]*)<\/wicket:(extend|panel|dialog)>/;
+  const extendPageRegex =
+    /<!-- extend-page="([^"]*)"( with="[^"]*")? -->\r?\n<wicket:(extend|panel|dialog)[^>]*>([\s\S]*)<\/wicket:(extend|panel|dialog)>/;
   const found = html.match(extendPageRegex);
 
   if (!found) {
@@ -403,43 +403,43 @@ function includePanels(html, variables) {
  * @param res
  */
 function serveWicketPage(req, res) {
-  time("serveWicketPage");
+  time('serveWicketPage');
 
   const pageWithPath = req.params[0];
   const queryVars = req.query;
 
-  time("readWicketHtmlFile");
+  time('readWicketHtmlFile');
   let html = readWicketHtmlFile(pageWithPath);
-  timeEnd("readWicketHtmlFile");
+  timeEnd('readWicketHtmlFile');
 
   const additionalHeadElements = [];
 
   if (!html) {
-    res.status(404).send("Page not found.");
+    res.status(404).send('Page not found.');
     return;
   }
 
-  time("expandPages");
+  time('expandPages');
   html = expandPages(html, queryVars, additionalHeadElements);
-  timeEnd("expandPages");
+  timeEnd('expandPages');
 
-  time("includePanels");
+  time('includePanels');
   html = includePanels(html, queryVars);
-  timeEnd("includePanels");
+  timeEnd('includePanels');
 
-  time("stripWicketTags");
+  time('stripWicketTags');
   html = stripWicketTags(html);
-  timeEnd("stripWicketTags");
+  timeEnd('stripWicketTags');
 
-  time("includeAdditionalHeadElements");
+  time('includeAdditionalHeadElements');
   html = includeAdditionalHeadElements(html, additionalHeadElements);
-  timeEnd("includeAdditionalHeadElements");
+  timeEnd('includeAdditionalHeadElements');
 
   html = addLiveReload(html);
 
-  res.set("Content-Type", "text/html; charset=utf-8");
+  res.set('Content-Type', 'text/html; charset=utf-8');
   res.send(html);
-  timeEnd("serveWicketPage");
+  timeEnd('serveWicketPage');
 }
 
 /**
@@ -453,27 +453,27 @@ function serveWicketPage(req, res) {
  */
 function staticPageListing(res, validPageRegex, pageRoute, title) {
   const pageDirectory = recursiveReadSync(opts.templateRoot);
-  let html = "";
+  let html = '';
 
   pageDirectory.forEach((pageFile) => {
     if (pageFile.match(validPageRegex)) {
-      const pageFileWithoutRoot = pageFile.replace(`${opts.templateRoot}/`, "");
+      const pageFileWithoutRoot = pageFile.replace(`${opts.templateRoot}/`, '');
       html += `<a href="/${pageRoute}/${pageFileWithoutRoot}">/${pageRoute}/${pageFileWithoutRoot}</a><br>`;
     }
   });
 
   if (!html) {
-    return res.status(404).send("No pages found.");
+    return res.status(404).send('No pages found.');
   }
 
   html = addLiveReload(html);
   html = `<h1>${title}</h1>${html}`;
 
-  res.set("Content-Type", "text/html");
+  res.set('Content-Type', 'text/html');
   return res.send(html);
 }
 
-app.use(timeout("10s"));
+app.use(timeout('10s'));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(compression());
 app.use(express.static(opts.expressRoot));
@@ -483,64 +483,64 @@ app.use(haltOnTimeout);
  * Global logging function
  */
 app.use((req, res, next) => {
-  console.log("%s %s", req.method, req.url); // eslint-disable-line no-console
+  console.log('%s %s', req.method, req.url);
   next();
 });
 
 /**
  * Documentation pages
  */
-app.use("/doc", serveIndex("./doc", { icons: true }));
-app.use("/doc", serveStatic("./doc"));
+app.use('/doc', serveIndex('./doc', { icons: true }));
+app.use('/doc', serveStatic('./doc'));
 
 /**
  * Main route
  */
-app.get("/", (req, res) => {
+app.get('/', (req, res) => {
   const content = readFile(opts.homepage);
-  res.set("Content-Type", "text/html; charset=utf-8");
+  res.set('Content-Type', 'text/html; charset=utf-8');
   res.send(marked(content));
 });
 
 /**
  * List all pages
  */
-app.get("/pages", (req, res) => {
-  staticPageListing(res, /Page\.html/, "pages", "Premium Pages");
+app.get('/pages', (req, res) => {
+  staticPageListing(res, /Page\.html/, 'pages', 'Premium Pages');
 });
 
 /**
  * Parse single page
  */
-app.get("/pages/*", (req, res) => {
+app.get('/pages/*', (req, res) => {
   serveWicketPage(req, res);
 });
 
 /**
  * List all panels
  */
-app.get("/panels", (req, res) => {
-  staticPageListing(res, /Panel\.html/, "panels", "Premium Panels");
+app.get('/panels', (req, res) => {
+  staticPageListing(res, /Panel\.html/, 'panels', 'Premium Panels');
 });
 
 /**
  * Parse single panel
  */
-app.get("/panels/*", (req, res) => {
+app.get('/panels/*', (req, res) => {
   serveWicketPage(req, res);
 });
 
 /**
  * List all dialogs
  */
-app.get("/dialogs", (req, res) => {
-  staticPageListing(res, /Dialog\.html/, "dialogs", "Premium Dialogs");
+app.get('/dialogs', (req, res) => {
+  staticPageListing(res, /Dialog\.html/, 'dialogs', 'Premium Dialogs');
 });
 
 /**
  * Parse single dialog
  */
-app.get("/dialogs/*", (req, res) => {
+app.get('/dialogs/*', (req, res) => {
   serveWicketPage(req, res);
 });
 
@@ -548,17 +548,17 @@ app.get("/dialogs/*", (req, res) => {
  * Test route for generic POST calls.
  * Renders the posted variables.
  */
-app.all("/test/post", (req, res) => {
-  let response = "";
-  const params = JSON.stringify(req.params, null, "  ");
-  const body = JSON.stringify(req.body, null, "  ");
+app.all('/test/post', (req, res) => {
+  let response = '';
+  const params = JSON.stringify(req.params, null, '  ');
+  const body = JSON.stringify(req.body, null, '  ');
 
-  response += "<h2>Params</h2>";
+  response += '<h2>Params</h2>';
   response += `<pre>${params}</pre>`;
-  response += "<h2>Body</h2>";
+  response += '<h2>Body</h2>';
   response += `<pre>${body}</pre>`;
 
-  res.set("Content-Type", "text/html");
+  res.set('Content-Type', 'text/html');
   res.send(response);
 });
 
@@ -567,7 +567,7 @@ if (opts.server === true) {
   const port = opts.serverPort;
 
   http.createServer(app).listen(port, () => {
-    console.log("Static server listening on http://localhost:%s", port); // eslint-disable-line no-console
+    console.log('Static server listening on http://localhost:%s', port);
   });
 }
 

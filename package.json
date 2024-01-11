@@ -7,7 +7,8 @@
     "serve": "node server.js --server",
     "format": "npx prettier --write . && npx eslint --fix --ignore-pattern **/*.json",
     "publish": "np",
-    "test": "echo \"No test specified\""
+    "test": "echo \"No test specified\"",
+    "prepare": "husky install"
   },
   "author": {
     "name": "Gridonic",
@@ -45,32 +46,20 @@
     "swig-templates": "^2.0.3"
   },
   "devDependencies": {
-    "eslint": "^7.6.0",
-    "eslint-config-airbnb": "^18.2.0",
-    "eslint-config-prettier": "^6.11.0",
-    "eslint-plugin-import": "^2.22.0",
-    "eslint-plugin-jsx-a11y": "^6.3.1",
-    "eslint-plugin-prettier": "^3.1.4",
-    "eslint-plugin-react": "^7.20.5",
-    "husky": "^4.2.5",
-    "lint-staged": "^10.2.11",
-    "np": "^6.4.0",
-    "prettier": "^2.0.5"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
+    "eslint": "^8.56.0",
+    "husky": "^8.0.3",
+    "lint-staged": "^15.2.0",
+    "np": "^9.2.0",
+    "prettier": "^3.1.1"
   },
   "lint-staged": {
-    "**/*": [
-      "prettier --write"
-    ],
-    "**/*.js": [
-      "eslint --fix"
-    ]
+    "*": "npx prettier --write",
+    "*.js": "npx eslint --fix"
   },
   "publishConfig": {
     "access": "public"
+  },
+  "engines": {
+    "node": ">=20"
   }
 }
