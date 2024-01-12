@@ -15,7 +15,7 @@ Use CLI parameters for easy configuration.
 - Use `-h, --homepage` to show a specific html or markdown file as homepage.
 - Use `-e, --expressRoot` to define a path from which additional static files are served.
 - Use `-r` or `--reload` to add <script src="//localhost:[opts.reloadPort]/livereload.js"></script> to all page bodies.
-- Use `-c` or `--code` to format code wrapped in `<pre><code class="language-js">…</code></pre>`?.
+- Use `-c` or `--code` to format code wrapped in `<pre><code class="language-js">…</code></pre>`.
 - Use `--reloadPort` to define the port in the livereload script tag.
 - Use `-s` or `--server` to start an express server.
 - Use `--serverPort` to define the port for the express server.

@@ -284,7 +284,10 @@ function extractVars(varsString) {
  * @return {*}
  */
 function substituteVars(html, vars) {
-  return ejs.render(html, vars);
+  return ejs.render(html, vars, {
+    openDelimiter: '[',
+    closeDelimiter: ']',
+  });
 }
 
 /**
