@@ -6,7 +6,8 @@
       name="viewport"
       content="width=device-width,initial-scale=1,viewport-fit=cover"
     />
-    <title>wicket-static-server | {{ title }}</title>
+    <% if (!title) { var title = 'Page A'} %>
+    <title>wicket-static-server | <%= title %></title>
     <!-- wicket-head -->
   </head>
   <body>
@@ -14,5 +15,33 @@
       <p>a-page</p>
       <wicket:child></wicket:child>
     </wicket:extend>
+
+    <h3>HTML</h3>
+    <pre>
+      <code class="language-html">
+        &lt;ul&gt;
+          &lt;li&gt;lorem&lt;/li&gt;
+          &lt;li&gt;ipsum&lt;/li&gt;
+          &lt;li&gt;dolor&lt;/li&gt;
+        &lt;/ul&gt;
+      </code>
+    </pre>
+
+    <h3>JavaScript</h3>
+    <pre>
+      <code class="language-js">
+        const date = new Date();
+        console.log(date);
+      </code>
+    </pre>
+
+    <h3>Java</h3>
+    <pre>
+      <code class="language-java">
+        public class Main {
+          int a = 7;
+        }
+      </code>
+    </pre>
   </body>
 </html>

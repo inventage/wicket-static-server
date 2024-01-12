@@ -1,8 +1,7 @@
 const bodyParser = require('body-parser');
 const compression = require('compression');
 const express = require('express');
-const extend = require('extend');
-const fs = require('graceful-fs');
+const fs = require('fs');
 const glob = require('glob');
 const http = require('http');
 const marked = require('marked');
@@ -10,34 +9,29 @@ const path = require('path');
 const recursiveReadSync = require('recursive-readdir-sync');
 const serveIndex = require('serve-index');
 const serveStatic = require('serve-static');
-const swig = require('swig-templates');
+const ejs = require('ejs');
 const timeout = require('connect-timeout');
-const { Command } = require('commander');
+const program = require('commander');
 
 const app = express();
-const opts = new Command();
-
-// Add syntax highlighting for styleguide
-require('swig-highlight').apply(swig);
 
 // Caching variables
 const filePathsCache = {};
 
 // Setup server options
-opts
+const opts = program
   .option(
     '-h, --homepage <pathToFile>',
     'Display html or markdown file as homepage.',
-    resolvePath,
-    resolvePath('README.md')
+    `${resolvePath('README.md')}`
   )
   .option(
     '-e, --expressRoot <pathToFolder>',
     'Root path of express server.',
-    resolvePath,
-    resolvePath('')
+    '.'
   )
   .option('-r, --reload', 'Should we add live-reload middleware?', false)
+  .option('-c, --code', 'Should we highlight code?', false)
   .option(
     '-s, --reloadPort <number>',
     'Which port should we use for express server?',
@@ -52,21 +46,20 @@ opts
   .option(
     '-e, --templateRootExpansion <pathToFolder>',
     'Extend listed templates by templates of given folder. It must be a superset of --templateRoot',
-    resolvePath,
-    resolvePath('test/templates')
+    `${resolvePath('test/templates')}`
   )
   .option(
     '-t, --templateRoot <pathToFolder>',
     'List templates of given folder.',
-    resolvePath,
-    resolvePath('test/templates/package-a')
+    `${resolvePath('test/templates')}`
   )
   .option(
     '-v, --verbose',
     'Should we display some more information during execution?',
     false
   )
-  .parse(process.argv);
+  .parse(process.argv)
+  .opts();
 
 function resolvePath(value) {
   return path.resolve(process.cwd(), value);
@@ -108,18 +101,31 @@ function haltOnTimeout(req, res, next) {
  * @returns {*}
  */
 function addLiveReload(html) {
-  if (
-    opts.reload === true &&
+  return opts.reload &&
     html.match(/localhost:[0-9]{1,5}\/livereload.js/) === null
-  ) {
-    // noinspection JSUnresolvedLibraryURL
-    return html.replace(
-      '</body>',
-      `<script src="//localhost:${opts.reloadPort}/livereload.js"></script></body>`
-    );
-  }
+    ? html.replace(
+        '</body>',
+        `<script src="//localhost:${opts.reloadPort}/livereload.js"></script></body>`
+      )
+    : html;
+}
 
-  return html;
+/**
+ * Add livereload middleware of grunt-contrib-watch.
+ *
+ * @param html
+ * @returns {*}
+ */
+function addSyntaxHighlighting(html) {
+  return opts.code
+    ? html.replace(
+        '</body>',
+        `<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-light.css">
+        <script>hljs.highlightAll();</script>
+      </body>`
+      )
+    : html;
 }
 
 /**
@@ -278,7 +284,7 @@ function extractVars(varsString) {
  * @return {*}
  */
 function substituteVars(html, vars) {
-  return swig.render(html, { locals: vars });
+  return ejs.render(html, vars);
 }
 
 /**
@@ -382,12 +388,12 @@ function includePanels(html, variables) {
   const vars = extractVars(panelVariables);
   htmlFileToInclude = expandPages(
     htmlFileToInclude,
-    extend(variables, vars),
+    Object.assign({}, variables, vars),
     []
   );
   htmlFileToInclude = substituteVars(
     htmlFileToInclude,
-    extend(variables, vars)
+    Object.assign({}, variables, vars)
   );
   const processedHtml = html.replace(panelPlaceholder, htmlFileToInclude);
 
@@ -436,6 +442,7 @@ function serveWicketPage(req, res) {
   timeEnd('includeAdditionalHeadElements');
 
   html = addLiveReload(html);
+  html = addSyntaxHighlighting(html);
 
   res.set('Content-Type', 'text/html; charset=utf-8');
   res.send(html);
@@ -499,7 +506,7 @@ app.use('/doc', serveStatic('./doc'));
 app.get('/', (req, res) => {
   const content = readFile(opts.homepage);
   res.set('Content-Type', 'text/html; charset=utf-8');
-  res.send(marked(content));
+  res.send(marked.parse(content));
 });
 
 /**
